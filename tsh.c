@@ -108,7 +108,8 @@ int main(int argc, char **argv)
 
     /* Parse the command line */
     while ((c = getopt(argc, argv, "hvp")) != EOF) {
-
+		switch (c) {
+		case 'h':
             usage();
             break;
         case 'v':             /* emit additional diagnostic info */
@@ -183,9 +184,11 @@ void eval(char *cmdline)
 		if(!isInBg){
 			wait(NULL);
 		}
-		
 	}
-	
+
+/*	if(argv[2] == "&"){
+		printf("WORKS");
+	}*/
 	return;
 }
 
