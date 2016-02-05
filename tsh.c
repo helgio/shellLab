@@ -180,7 +180,7 @@ void eval(char *cmdline)
 			execv(argv[0], argv);
 		}
 		
-		wait(Null);
+		wait(NULL);
 		
 	}
 	
