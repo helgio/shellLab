@@ -5,10 +5,10 @@
  *
  * === User information ===
  * Group: NONE
- * User 1: dude14
- * SSN: 1807825919
- * User 2:
- * SSN: X
+ * User 1: helgio13
+ * SSN: 0206932909
+ * User 2: ragnae13
+ * SSN: 0501902259
  * === End User Information ===
  */
 #include <stdio.h>
@@ -108,8 +108,7 @@ int main(int argc, char **argv)
 
     /* Parse the command line */
     while ((c = getopt(argc, argv, "hvp")) != EOF) {
-        switch (c) {
-        case 'h':             /* print help message */
+
             usage();
             break;
         case 'v':             /* emit additional diagnostic info */
