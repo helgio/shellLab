@@ -185,8 +185,8 @@ void eval(char *cmdline)
 			wait(NULL);
 		}
 	}
-
-/*	if(argv[2] == "&"){
+	
+	/*if(strcmp(argv[2], "&") == 0){
 		printf("WORKS");
 	}*/
 	return;
@@ -269,7 +269,8 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv)
 {
-    return;
+    
+	return;
 }
 
 /*
