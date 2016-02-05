@@ -174,14 +174,16 @@ int main(int argc, char **argv)
 void eval(char *cmdline)
 {
 	char *argv[MAXARGS];
-	parseline(cmdline, argv);
+	int isInBg = parseline(cmdline, argv);
 	if (builtin_cmd(argv) == 0){
 		pid_t pid = fork();
 		if (pid == 0){
 			execv(argv[0], argv);
 		}
 		
-		wait(NULL);
+		if(!isInBg){
+			wait(NULL);
+		}
 		
 	}
 	
