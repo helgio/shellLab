@@ -180,15 +180,15 @@ void eval(char *cmdline)
 		if (pid == 0){
 			execv(argv[0], argv);
 		}
-		
+	// útfæra FG BG
+	// prenta joblist, add í job state	
 		if(!isInBg){
+	// passa reapa rétt
+	// https://vimeo.com/60240244 
+	// útfæra 
 			wait(NULL);
 		}
 	}
-	
-	/*if(strcmp(argv[2], "&") == 0){
-		printf("WORKS");
-	}*/
 	return;
 }
 
@@ -260,7 +260,17 @@ int builtin_cmd(char **argv)
 {
     if(strcmp(argv[0], "quit") == 0){
         exit(0);
-    }
+    } 
+	// breyta hvað gerist 
+	else if (strcmp(argv[0], "fg") == 0){
+        exit(0);
+	}
+	else if (strcmp(argv[0], "bg") == 0){
+        exit(0);
+	}	
+	else if (strcmp(argv[0], "jobs") == 0){
+        exit(0);
+	}
     return 0;     /* not a builtin command */
 }
 
