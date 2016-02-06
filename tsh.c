@@ -175,10 +175,9 @@ void eval(char *cmdline)
 {
 	char *argv[MAXARGS]; // Argumented list execve()
 	char buf[MAXLINE];   // Holds modified commandline
-	struct job_t *jobs;   // for acessing jobs
+	//struct job_t *jobs;   // for acessing jobs
 	int isInBg = parseline(cmdline, argv); // should the job run in bg or fg
 	pid_t pid;   	 	 // Process id 
-
 	if (argv[0] == NULL) {
 		return;          // ignore empty lines
 	}
@@ -188,27 +187,23 @@ void eval(char *cmdline)
 				printf("%s: Command not found. \n", argv[0]);
 				fflush(stdout);
 				exit(0);
-				}
-			
-			if(isInBg){
-				addjob(jobs, pid, BG, cmdline);
-				}
-			else{
-				addjob(jobs, pid, FG, cmdline);
-				}
+				}	
 			}
-			
-
 									// útfæra FG BG
 									// prenta joblist, add í job state
 		// parent watis for forground job to terminate
 		if(!isInBg){
+			addjob(jobs, pid, FG, cmdline);
+
 			int status;
 			if (waitpid(pid, &status, 0) < 0) {
 				unix_error("waitfg: waitpid error");
 				}
 			}
-		else printf("%d %s", pid, cmdline);
+		else{
+			addjob(jobs, pid, BG, cmdline);
+			printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline);
+		}
 	}		
 	// passa reapa rétt
 	// https://vimeo.com/60240244 
