@@ -191,10 +191,6 @@ void eval(char *cmdline)
 				}
 			}
 
-				/*	pid_t pid = fork();
-					if (pid == 0){
-					execv(argv[0], argv);
-				}*/
 									// útfæra FG BG
 									// prenta joblist, add í job state
 		// parent watis for forground job to terminate
@@ -300,7 +296,7 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv)
 {
-    
+   
 	return;
 }
 
