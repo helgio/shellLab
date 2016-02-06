@@ -349,6 +349,7 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig)
 {
+	pid_t pid;
 	printf("Job [%d] (%d) terminated by signal 2", pid2jid(pid), pid);
 	return;
 }
