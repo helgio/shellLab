@@ -173,22 +173,42 @@ int main(int argc, char **argv)
  */
 void eval(char *cmdline)
 {
-	char *argv[MAXARGS];
-	int isInBg = parseline(cmdline, argv);
-	if (builtin_cmd(argv) == 0){
-		pid_t pid = fork();
-		if (pid == 0){
-			execv(argv[0], argv);
-		}
-	// útfæra FG BG
-	// prenta joblist, add í job state	
+	char *argv[MAXARGS]; // Argumented list execve()
+	char buf[MAXLINE];   // Holds modified commandline
+	struct job_t *job;   // for acessing jobs
+	int isInBg = parseline(cmdline, argv); // should the job run in bg or fg
+	pid_t pid;   	 	 // Process id 
+
+	if (argv[0] == NULL) {
+		return;          // ignore empty lines
+	}
+	if (!builtin_cmd(argv) == 0){
+		if ((pid = fork()) == 0) { 		// child runs user job
+			if (execve(argv[0], argv, environ) < 0)  {  
+				printf("%s: Command not found. \n", argv[0]);
+				fflush(stdout);
+				exit(0);
+				}
+			}
+
+				/*	pid_t pid = fork();
+					if (pid == 0){
+					execv(argv[0], argv);
+				}*/
+									// útfæra FG BG
+									// prenta joblist, add í job state
+		// parent watis for forground job to terminate
 		if(!isInBg){
+			int status;
+			if (waitpid(pid, &status, 0) < 0) {
+				unix_error("waitfg: waitpid error");
+				}
+			}
+		else printf("%d %s", pid, cmdline);
+		}		
 	// passa reapa rétt
 	// https://vimeo.com/60240244 
 	// útfæra 
-			wait(NULL);
-		}
-	}
 
 	return;
 }
