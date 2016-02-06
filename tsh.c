@@ -178,11 +178,17 @@ void eval(char *cmdline)
 	//struct job_t *jobs;   // for acessing jobs
 	int isInBg = parseline(cmdline, argv); // should the job run in bg or fg
 	pid_t pid;   	 	 // Process id 
+	sigset_t mask;
 	if (argv[0] == NULL) {
 		return;          // ignore empty lines
 	}
 	if (!builtin_cmd(argv)){
+		sigemptyset(&mask);
+		sigaddset(&mask, SIGCHLD);
+		sigprocmask(SIG_BLOCK, &mask, NULL); /* Block SIGCHLD */
+	 
 		if ((pid = fork()) == 0) { 		// child runs user job
+			sigprocmask(SIG_UNBLOCK, &mask, NULL); /* Unblock SIGCHLD */
 			if (execve(argv[0], argv, environ) < 0)  {  
 				printf("%s: Command not found. \n", argv[0]);
 				fflush(stdout);
@@ -193,17 +199,19 @@ void eval(char *cmdline)
 									// prenta joblist, add í job state
 		// parent watis for forground job to terminate
 		if(!isInBg){
-		//	addjob(jobs, pid, FG, cmdline);
-
+			addjob(jobs, pid, FG, cmdline);
+		//	sigprocmask(SIG_UNBLOCK, &mask, NULL);  /* Unblock SIGCHLD */
 			int status;
 			if (waitpid(pid, &status, 0) < 0) {
 				unix_error("waitfg: waitpid error");
 				}
+			deletejob(jobs, pid);
 			}
 		else{
 			addjob(jobs, pid, BG, cmdline);
 			printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline);
 		}
+	   sigprocmask(SIG_UNBLOCK, &mask, NULL);  /* Unblock SIGCHLD */
 	}		
 	// passa reapa rétt
 	// https://vimeo.com/60240244 
@@ -285,7 +293,8 @@ int builtin_cmd(char **argv)
         do_bgfg(argv);
 	}	
 	if(strcmp(argv[0], "jobs") == 0){
-        exit(0);
+       listjobs(jobs);
+	   return 1;
 	}
     return 0;     /* not a builtin command */
 }
@@ -340,7 +349,9 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig)
 {
-    return;
+    
+    printf("Terminating after receipt of SIGINT signal\n");
+	return;
 }
 
 /*
