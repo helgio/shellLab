@@ -175,7 +175,7 @@ void eval(char *cmdline)
 {
 	char *argv[MAXARGS]; // Argumented list execve()
 	char buf[MAXLINE];   // Holds modified commandline
-	struct job_t *job;   // for acessing jobs
+	struct job_t *jobs;   // for acessing jobs
 	int isInBg = parseline(cmdline, argv); // should the job run in bg or fg
 	pid_t pid;   	 	 // Process id 
 
@@ -189,7 +189,15 @@ void eval(char *cmdline)
 				fflush(stdout);
 				exit(0);
 				}
+			
+			if(isInBg){
+				addjob(jobs, pid, BG, cmdline);
+				}
+			else{
+				addjob(jobs, pid, FG, cmdline);
+				}
 			}
+			
 
 									// útfæra FG BG
 									// prenta joblist, add í job state
@@ -278,14 +286,10 @@ int builtin_cmd(char **argv)
     if(strcmp(argv[0], "quit") == 0){
         exit(0);
     } 
-	// breyta hvað gerist 
-	else if (strcmp(argv[0], "fg") == 0){
-        exit(0);
-	}
-	else if (strcmp(argv[0], "bg") == 0){
-        exit(0);
+	if ((strcmp(argv[0], "fg")) || (strcmp(argv[0], "bg") == 0)){
+        do_bgfg(argv);
 	}	
-	else if (strcmp(argv[0], "jobs") == 0){
+	if(strcmp(argv[0], "jobs") == 0){
         exit(0);
 	}
     return 0;     /* not a builtin command */
@@ -296,7 +300,7 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv)
 {
-   
+   	printf("do bgfg WORKS \n"); 
 	return;
 }
 
@@ -321,6 +325,10 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig)
 {
+	int saved_errno = errno;
+	while (waitpid((pid_t)(-1), 0, WNOHANG) > 0) {}
+	errno = saved_errno;
+
     return;
 }
 
