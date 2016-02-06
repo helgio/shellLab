@@ -182,7 +182,7 @@ void eval(char *cmdline)
 	if (argv[0] == NULL) {
 		return;          // ignore empty lines
 	}
-	if (!builtin_cmd(argv) == 0){
+	if (!builtin_cmd(argv)){
 		if ((pid = fork()) == 0) { 		// child runs user job
 			if (execve(argv[0], argv, environ) < 0)  {  
 				printf("%s: Command not found. \n", argv[0]);
@@ -205,17 +205,11 @@ void eval(char *cmdline)
 				}
 			}
 		else printf("%d %s", pid, cmdline);
-		}		
+	}		
 	// passa reapa rétt
 	// https://vimeo.com/60240244 
 	// útfæra 
-<<<<<<< HEAD
 
-=======
-			wait(NULL);
-		}
-	}
->>>>>>> 663b46f0823da4d108855a559c3cf829acb5cb6e
 	return;
 }
 
