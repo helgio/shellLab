@@ -209,7 +209,13 @@ void eval(char *cmdline)
 	// passa reapa rétt
 	// https://vimeo.com/60240244 
 	// útfæra 
+<<<<<<< HEAD
 
+=======
+			wait(NULL);
+		}
+	}
+>>>>>>> 663b46f0823da4d108855a559c3cf829acb5cb6e
 	return;
 }
 
@@ -300,7 +306,8 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv)
 {
-    return;
+    
+	return;
 }
 
 /*
