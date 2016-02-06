@@ -193,7 +193,7 @@ void eval(char *cmdline)
 									// prenta joblist, add í job state
 		// parent watis for forground job to terminate
 		if(!isInBg){
-			addjob(jobs, pid, FG, cmdline);
+		//	addjob(jobs, pid, FG, cmdline);
 
 			int status;
 			if (waitpid(pid, &status, 0) < 0) {
@@ -295,7 +295,7 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv)
 {
-   	printf("do bgfg WORKS \n"); 
+   //	printf("do bgfg WORKS \n"); 
 	return;
 }
 
@@ -320,9 +320,15 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig)
 {
+	pid_t pid;
+
 	int saved_errno = errno;
-	while (waitpid((pid_t)(-1), 0, WNOHANG) > 0) {}
+	while ((pid = waitpid((pid_t)(-1), 0, WNOHANG)) > 0) {
+		deletejob(jobs, pid);
+	}
 	errno = saved_errno;
+	
+
 
     return;
 }
