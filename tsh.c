@@ -351,7 +351,7 @@ void sigint_handler(int sig)
 {
 	pid_t pid = fgpid(jobs);
 	printf("Job [%d] (%d) terminated by signal 2 \n", pid2jid(pid), pid);
-	return;
+	kill(pid, SIGKILL);
 }
 
 /*
