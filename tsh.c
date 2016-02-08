@@ -185,9 +185,11 @@ void eval(char *cmdline)
 	if (!builtin_cmd(argv)){
 		sigemptyset(&mask);
 		sigaddset(&mask, SIGCHLD);
+	//	sigaddset(&mask, SIGINT);
 		sigprocmask(SIG_BLOCK, &mask, NULL); /* Block SIGCHLD */
 	 
-		if ((pid = fork()) == 0) { 		// child runs user job
+		if ((pid = fork()) == 0) {	// child runs user job
+			setpgid(0,0);
 			sigprocmask(SIG_UNBLOCK, &mask, NULL); /* Unblock SIGCHLD */
 			if (execve(argv[0], argv, environ) < 0)  {  
 				printf("%s: Command not found. \n", argv[0]);
@@ -205,9 +207,11 @@ void eval(char *cmdline)
 			if (waitpid(pid, &status, 0) < 0) {
 				unix_error("waitfg: waitpid error");
 				}
-			deletejob(jobs, pid);
+				deletejob(jobs, pid);
 			}
 		else{
+			
+		sigaddset(&mask, SIGINT);
 			addjob(jobs, pid, BG, cmdline);
 			printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline);
 		}
@@ -350,8 +354,13 @@ void sigchld_handler(int sig)
 void sigint_handler(int sig)
 {
 	pid_t pid = fgpid(jobs);
-	printf("Job [%d] (%d) terminated by signal 2 \n", pid2jid(pid), pid);
-	kill(pid, SIGKILL);
+	if (pid != 0){
+		
+		kill(-pid, SIGINT);
+		printf("Job [%d] (%d) terminated by signal 2 \n", pid2jid(pid), pid);
+	}
+
+	return;
 }
 
 /*
