@@ -185,9 +185,7 @@ void eval(char *cmdline)
 	if (!builtin_cmd(argv)){
 		sigemptyset(&mask);
 		sigaddset(&mask, SIGCHLD);
-	//	sigaddset(&mask, SIGINT);
 		sigprocmask(SIG_BLOCK, &mask, NULL); /* Block SIGCHLD */
-	 
 		if ((pid = fork()) == 0) {	// child runs user job
 			setpgid(0,0);
 			sigprocmask(SIG_UNBLOCK, &mask, NULL); /* Unblock SIGCHLD */
@@ -202,16 +200,19 @@ void eval(char *cmdline)
 		// parent watis for forground job to terminate
 		if(!isInBg){
 			addjob(jobs, pid, FG, cmdline);
-		//	sigprocmask(SIG_UNBLOCK, &mask, NULL);  /* Unblock SIGCHLD */
+			sigprocmask(SIG_UNBLOCK, &mask, NULL);  /* Unblock SIGCHLD */
 			int status;
-			if (waitpid(pid, &status, 0) < 0) {
+		/*	if (waitpid(pid, &status, 0) < 0) {
 				unix_error("waitfg: waitpid error");
-				}
-				deletejob(jobs, pid);
+				}*/
+			while(pid == fgpid(jobs)) {
+					sleep(1);
 			}
+		//	deletejob(jobs, pid);
+		}
 		else{
 			
-		sigaddset(&mask, SIGINT);
+			sigaddset(&mask, SIGINT);
 			addjob(jobs, pid, BG, cmdline);
 			printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline);
 		}
@@ -334,9 +335,15 @@ void waitfg(pid_t pid)
 void sigchld_handler(int sig)
 {
 	pid_t pid;
+	int status;
 
 	int saved_errno = errno;
-	while ((pid = waitpid((pid_t)(-1), 0, WNOHANG)) > 0) {
+	while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
+		if (WIFSTOPPED(status)){
+			getjobpid(jobs, pid)->state = ST;
+			return;
+		}
+
 		deletejob(jobs, pid);
 	}
 	errno = saved_errno;
@@ -354,10 +361,13 @@ void sigchld_handler(int sig)
 void sigint_handler(int sig)
 {
 	pid_t pid = fgpid(jobs);
+
 	if (pid != 0){
 		
 		kill(-pid, SIGINT);
 		printf("Job [%d] (%d) terminated by signal 2 \n", pid2jid(pid), pid);
+
+		deletejob(jobs, pid);
 	}
 
 	return;
@@ -370,6 +380,12 @@ void sigint_handler(int sig)
  */
 void sigtstp_handler(int sig)
 {
+	pid_t pid = fgpid(jobs);
+	if(pid != 0){
+		printf("Job [%d] (%d) stopped by signal 20 \n", pid2jid(pid), pid);
+	//	getjobpid(jobs, pid)->state = ST;
+		kill(-pid, SIGTSTP);
+	}
     return;
 }
 
