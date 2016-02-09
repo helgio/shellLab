@@ -185,10 +185,10 @@ void eval(char *cmdline)
 	if (!builtin_cmd(argv)){
 		sigemptyset(&mask);
 		sigaddset(&mask, SIGCHLD);
-		sigprocmask(SIG_BLOCK, &mask, NULL); /* Block SIGCHLD */
+		sigprocmask(SIG_BLOCK, &mask, NULL); //Block SIGCHLD
 		if ((pid = fork()) == 0) {	// child runs user job
 			setpgid(0,0);
-			sigprocmask(SIG_UNBLOCK, &mask, NULL); /* Unblock SIGCHLD */
+			sigprocmask(SIG_UNBLOCK, &mask, NULL); //Unblock SIGCHLD 
 			if (execve(argv[0], argv, environ) < 0)  {  
 				printf("%s: Command not found. \n", argv[0]);
 				fflush(stdout);
@@ -197,15 +197,10 @@ void eval(char *cmdline)
 			}
 									// útfæra FG BG
 									// prenta joblist, add í job state
-		// parent watis for forground job to terminate
-		if(!isInBg){
-			addjob(jobs, pid, FG, cmdline);
+		if(!isInBg){ //Check is the job is a bg or fg job
+			addjob(jobs, pid, FG, cmdline); //add the job to the joblist as fg job
 			sigprocmask(SIG_UNBLOCK, &mask, NULL);  /* Unblock SIGCHLD */
-			int status;
-		/*	if (waitpid(pid, &status, 0) < 0) {
-				unix_error("waitfg: waitpid error");
-				}*/
-			while(pid == fgpid(jobs)) {
+			while(pid == fgpid(jobs)) { //The shell watis for the fb job to terminate
 					sleep(1);
 			}
 		//	deletejob(jobs, pid);
@@ -213,10 +208,10 @@ void eval(char *cmdline)
 		else{
 			
 			sigaddset(&mask, SIGINT);
-			addjob(jobs, pid, BG, cmdline);
+			addjob(jobs, pid, BG, cmdline); //add the job to the joblist as bg job
 			printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline);
 		}
-	   sigprocmask(SIG_UNBLOCK, &mask, NULL);  /* Unblock SIGCHLD */
+	   sigprocmask(SIG_UNBLOCK, &mask, NULL);  // Unblock SIGCHLD 
 	}		
 	// passa reapa rétt
 	// https://vimeo.com/60240244 
@@ -294,8 +289,9 @@ int builtin_cmd(char **argv)
     if(strcmp(argv[0], "quit") == 0){
         exit(0);
     } 
-	if ((strcmp(argv[0], "fg")) || (strcmp(argv[0], "bg") == 0)){
+	if ((strcmp(argv[0], "fg") == 0) || (strcmp(argv[0], "bg") == 0)){
         do_bgfg(argv);
+		return 1;
 	}	
 	if(strcmp(argv[0], "jobs") == 0){
         listjobs(jobs);
@@ -309,7 +305,9 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv)
 {
-   //	printf("do bgfg WORKS \n"); 
+   /*	printf("%s \n", argv[0]); 
+
+	if(argv[1][0]*/
 	return;
 }
 
@@ -339,12 +337,11 @@ void sigchld_handler(int sig)
 
 	int saved_errno = errno;
 	while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
-		if (WIFSTOPPED(status)){
-			getjobpid(jobs, pid)->state = ST;
+		if (WIFSTOPPED(status)){ //check if it is a Stop signal (crl-z)
 			return;
 		}
 
-		deletejob(jobs, pid);
+		deletejob(jobs, pid); //the job deleted for joblist
 	}
 	errno = saved_errno;
 	
@@ -362,9 +359,9 @@ void sigint_handler(int sig)
 {
 	pid_t pid = fgpid(jobs);
 
-	if (pid != 0){
+	if (pid != 0){ //check if it is the shell or a child process
 		
-		kill(-pid, SIGINT);
+		kill(-pid, SIGINT); //send SIGINT to terminated the process
 		printf("Job [%d] (%d) terminated by signal 2 \n", pid2jid(pid), pid);
 
 		deletejob(jobs, pid);
@@ -381,10 +378,10 @@ void sigint_handler(int sig)
 void sigtstp_handler(int sig)
 {
 	pid_t pid = fgpid(jobs);
-	if(pid != 0){
+	if(pid != 0){ //check if it is the shell or a child process
 		printf("Job [%d] (%d) stopped by signal 20 \n", pid2jid(pid), pid);
-	//	getjobpid(jobs, pid)->state = ST;
-		kill(-pid, SIGTSTP);
+		getjobpid(jobs, pid)->state = ST; //job state changed to ST (stopped)
+		kill(-pid, SIGTSTP); //send SIGTSTP signal to stop the process
 	}
     return;
 }
