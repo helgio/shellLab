@@ -356,7 +356,12 @@ void sigchld_handler(int sig)
 	int status;
 
 	int saved_errno = errno;
+	// The waitpid() system call suspends execution of the calling process until a child specified by pid argument has changed state. By default, waitpid() waits only for terminated children
+	// WNOHANG  return immediately if no child has exited.
+	// WUNTRACED also return if a child has stopped 
 	while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
+	// WIFSTOPPED(status)
+	// returns true if the child process was stopped by delivery of a signal; this is only possible if the call was done using WUNTRACED or when the child is being traced (see ptrace(2)).
 		if (WIFSTOPPED(status)){ //check if it is a Stop signal (crl-z)
 			return;
 		}
