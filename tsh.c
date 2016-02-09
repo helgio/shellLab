@@ -306,31 +306,62 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv)
 {
-   	printf("%s \n", argv[0]); 
+  // 	printf("%s \n", argv[0]); 
+	if(!argv[1]){
+		printf("%s command requires PID or %% jobid argument \n", argv[0]);
+		return;
+	}
+
+	printf("test1 \n");
+
+	char* tmp = argv[1] + 1;
+	int arg;
+	sscanf(tmp, "%d", &arg);
+
+	printf("test2 \n");
+
+	printf("%d \n", arg);
+	printf("%s \n", tmp);
+	if(!isdigit(arg)){
+		printf("%s command requires PID or %% jobid argument \n", argv[0]);
+		return;
+	}
+	
+	printf("test3 \n");
+	pid_t pid;
 
 	if(argv[1][0] == '%'){
-		
-		char* tmp = argv[1] + 1;
-		int jid;
-		sscanf(tmp, "%d", &jid);
+		int jid = arg;
 		printf("%d \n", jid);
-		
-		
-		pid_t pid = jid2pid(jid);
-
-		printf("%d \n", pid);
-
-		kill(pid, SIGCONT);
-
-		if (strcmp(argv[0], "fg") == 0) {
-
-			getjobpid(jobs, pid)->state = FG; //job state changed to ST (stopped)
-			waitfg(pid);
+		if(getjobjid(jobs, jid) == NULL){
+			printf("(%d): No such job", jid);
 			return;
 		}
 		
-		getjobpid(jobs, pid)->state = BG; //job state changed to ST (stopped)
+		pid = jid2pid(jid);
 	}
+	else{
+		printf("test");
+		pid = arg;
+		if(1){
+	//	if(getjobpid(jobs, pid) == NULL){
+			printf("(%d): No such job", pid);
+			return;
+		}
+	}
+	//	printf("%d \n", pid);
+
+	kill(-pid, SIGCONT);
+	
+	if (strcmp(argv[0], "fg") == 0) {
+
+		getjobpid(jobs, pid)->state = FG; //job state changed to FG
+		waitfg(pid);
+		return;
+	}
+		
+	getjobpid(jobs, pid)->state = BG; //job state changed to BG
+	
 	return;
 }
 
