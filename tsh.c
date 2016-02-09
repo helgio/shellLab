@@ -85,6 +85,7 @@ pid_t fgpid(struct job_t *jobs);
 struct job_t *getjobpid(struct job_t *jobs, pid_t pid);
 struct job_t *getjobjid(struct job_t *jobs, int jid);
 int pid2jid(pid_t pid);
+pid_t jid2pid(int jid);
 void listjobs(struct job_t *jobs);
 
 void usage(void);
@@ -315,14 +316,20 @@ void do_bgfg(char **argv)
 		printf("%d \n", jid);
 		
 		
-		pid_t pid = jobs[jid].pid;
+		pid_t pid = jid2pid(jid);
 
-		kill(-pid, SIGCONT);
+		printf("%d \n", pid);
 
-		if (strcmp(argv[0], "fg")) {
+		kill(pid, SIGCONT);
+
+		if (strcmp(argv[0], "fg") == 0) {
+
+			getjobpid(jobs, pid)->state = FG; //job state changed to ST (stopped)
 			waitfg(pid);
+			return;
 		}
 		
+		getjobpid(jobs, pid)->state = BG; //job state changed to ST (stopped)
 	}
 	return;
 }
@@ -356,12 +363,7 @@ void sigchld_handler(int sig)
 	int status;
 
 	int saved_errno = errno;
-	// The waitpid() system call suspends execution of the calling process until a child specified by pid argument has changed state. By default, waitpid() waits only for terminated children
-	// WNOHANG  return immediately if no child has exited.
-	// WUNTRACED also return if a child has stopped 
 	while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
-	// WIFSTOPPED(status)
-	// returns true if the child process was stopped by delivery of a signal; this is only possible if the call was done using WUNTRACED or when the child is being traced (see ptrace(2)).
 		if (WIFSTOPPED(status)){ //check if it is a Stop signal (crl-z)
 			return;
 		}
@@ -555,6 +557,23 @@ int pid2jid(pid_t pid)
     }
     return 0;
 }
+
+pid_t jid2pid(int jid){
+	
+	int i;
+
+	if(jid < 1){
+		return 0;
+	}
+	for(i = 0; i < MAXJOBS; i++){
+		if(jobs[i].jid == jid){
+			return jobs[i].pid;
+		}
+	}
+	
+	return 0;
+}
+
 
 /* listjobs - Print the job list */
 void listjobs(struct job_t *jobs)

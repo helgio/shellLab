@@ -1,0 +1,164 @@
+./sdriver.pl -t trace11.txt -s ./tsh -a "-p"
+#
+# trace11.txt - Forward SIGINT to every process in foreground process group
+#
+tsh> ./mysplit 4
+Job [1] (20822) terminated by signal 2 
+tsh> /bin/ps a
+  PID TTY      STAT   TIME COMMAND
+  891 tty1     Ss+    0:00 /sbin/agetty --noclear tty1 linux
+ 1075 pts/40   Ss     0:00 -zsh
+ 1158 pts/56   Ss     0:00 -zsh
+ 1172 pts/24   S+     0:00 vim ../../kalli
+ 1202 pts/59   Ss     0:00 -zsh
+ 1234 pts/59   S+     0:00 tmux attach
+ 1267 pts/14   Ss+    0:06 -zsh
+ 1297 pts/43   S+     1:51 top -u gudmundurk14
+ 1496 pts/62   Ss     0:00 -zsh
+ 1633 pts/85   S+     0:00 nano tsh.c
+ 1738 pts/56   S      0:00 ./tsh -p
+ 1742 pts/56   T      0:00 ./myspin 5
+ 1920 pts/65   S+     0:00 vim tsh.c
+ 2255 pts/64   Ss     0:00 -zsh
+ 2404 pts/56   S      0:00 ./tsh -p
+ 2408 pts/56   T      0:00 ./myspin 5
+ 2521 pts/66   Ss     0:00 -zsh
+ 2890 pts/1    S+     0:00 vim tsh.c
+ 2936 pts/18   Ss     0:00 -zsh
+ 3265 pts/30   Ss     0:00 -zsh
+ 3599 pts/18   S+     0:00 ./tsh
+ 3972 pts/46   S+     0:09 vim tsh.c
+ 4016 pts/49   Ss     0:00 -zsh
+ 4212 pts/35   S+     0:00 ./tshref
+ 4847 pts/80   Ss     0:01 -zsh
+ 5168 pts/8    Ss     0:01 -zsh
+ 5389 pts/60   Ss+    0:00 -zsh
+ 6099 pts/2    SN+    7:32 htop -u hlynur15
+ 6417 pts/8    S+     0:00 ./tshref
+ 7001 pts/0    S+     0:00 vim tsh.c
+ 7090 pts/22   Ss+    0:00 -zsh
+ 7153 pts/50   S+     0:00 ./tsh
+ 7466 pts/15   Ss+    0:02 -zsh
+ 7483 pts/23   Ss+    0:00 -zsh
+ 7510 pts/62   T      0:00 emacs tsh.c
+ 7850 pts/62   S+     0:00 vim tsh.c
+ 8427 pts/48   Ss     0:01 -zsh
+ 8564 pts/69   Ss+    0:00 -zsh
+ 8723 pts/55   Ss+    0:17 -zsh
+ 9224 pts/88   Ss+    0:00 -zsh
+ 9481 pts/63   Ss+    0:00 -zsh
+ 9603 pts/77   T      0:00 make test15
+ 9616 pts/77   T      0:00 /usr/bin/perl ./sdriver.pl -t trace15.txt -s ./tsh -a -p
+ 9617 pts/77   T      0:00 ./tsh -p
+ 9623 pts/57   Ss+    0:00 -zsh
+ 9967 pts/77   T      0:00 make test14
+ 9980 pts/77   T      0:00 /usr/bin/perl ./sdriver.pl -t trace14.txt -s ./tsh -a -p
+ 9981 pts/77   T      0:00 ./tsh -p
+10325 pts/77   T      0:00 make test14
+10338 pts/77   T      0:00 /usr/bin/perl ./sdriver.pl -t trace14.txt -s ./tsh -a -p
+10339 pts/77   T      0:00 ./tsh -p
+10365 pts/77   T      0:00 make test14
+10378 pts/77   T      0:00 /usr/bin/perl ./sdriver.pl -t trace14.txt -s ./tsh -a -p
+10379 pts/77   T      0:00 ./tsh -p
+10617 pts/50   Ss     0:00 -zsh
+10701 pts/32   Ss+    0:03 -zsh
+11132 pts/5    Ss+    0:00 -zsh
+11507 pts/3    Ss     0:00 -zsh
+11559 pts/43   Ss     0:00 -zsh
+11933 pts/4    Ss+    0:01 -zsh
+12080 pts/44   Ss     0:00 -zsh
+12313 pts/54   Ss     0:00 -zsh
+12904 pts/54   S+     0:17 vim tsh.c
+13219 pts/30   S+     0:00 tmux
+13222 pts/78   Ss     0:00 -zsh
+13273 pts/82   Ss+    0:00 -zsh
+13340 pts/83   Ss     0:00 -zsh
+13513 pts/83   T      0:00 man htop
+13523 pts/83   T      0:00 less
+13599 pts/83   S+     1:53 htop --user=arnarpj15
+14520 pts/9    Ss     0:00 -zsh
+14800 pts/2    SNs    0:00 -zsh
+14830 pts/80   S+     0:00 vim tsh.c
+14869 pts/3    S+     0:13 vim tsh.c
+14933 pts/6    SNs+   0:00 -zsh
+15812 pts/45   S      0:00 ./tsh -p
+15813 pts/45   Z      0:00 [echo] <defunct>
+16096 pts/19   S+     0:04 vim tsh.c
+16216 pts/64   S+     0:00 nano tsh.c
+16248 pts/66   S+     0:01 emacs tsh.c
+16417 pts/16   Ss+    0:00 -zsh
+17359 pts/53   S+     0:00 nano tsh.c
+17737 pts/56   S      0:00 ./tsh -p
+17861 pts/29   S+     0:02 emacs tsh.c
+17900 pts/38   Ss+    0:00 -zsh
+18308 pts/48   S+     0:00 vim grade_problem16f.sh
+18486 pts/21   Ss     0:00 -zsh
+18993 pts/41   Ss+    0:00 -zsh
+19093 pts/78   S+     0:03 vim tsh.c
+19358 pts/10   Ss     0:00 -zsh
+19415 pts/52   Ss+    0:00 -zsh
+19918 pts/42   Ss     0:00 -zsh
+19936 pts/56   S      0:00 ./tsh -p
+20128 pts/42   S+     0:00 nano tsh.c
+20249 pts/21   S+     0:00 vim tsh.c
+20387 pts/67   S+     0:00 /bin/bash ./question1.4.sh
+20400 pts/67   S+     0:00 vi ../answers/answer1.4.txt
+20461 pts/44   S      0:00 ./myspin 99
+20464 pts/45   S+     0:01 vim tsh.c
+20548 pts/44   S+     0:00 vim tsh.c
+20580 pts/73   Ss+    0:00 -zsh
+20605 pts/28   Ss     0:00 -zsh
+20652 pts/86   Ss     0:01 -zsh
+20709 pts/28   S+     0:00 vim tsh.c
+20784 pts/56   S+     0:00 vim output11.txt
+20798 pts/9    S+     0:00 vim tsh.c
+20806 pts/49   S+     0:00 make test11
+20819 pts/49   S+     0:00 /usr/bin/perl ./sdriver.pl -t trace11.txt -s ./tsh -a -p
+20820 pts/49   S+     0:00 ./tsh -p
+20825 pts/49   R      0:00 /bin/ps a
+21182 pts/20   Ss+    0:00 -zsh
+21379 pts/31   Ss     0:00 -zsh
+21628 pts/29   Ss     0:00 -zsh
+23275 pts/90   Ss+    0:00 -zsh
+24201 pts/0    Ss     0:01 -zsh
+24319 pts/27   Ss+    0:00 -zsh
+24646 pts/85   Ss     0:02 -zsh
+25220 pts/24   Ss     0:00 -zsh
+25266 pts/67   Ss     0:00 -zsh
+25629 pts/86   S+     0:00 cgdb -q signal-race
+25630 pts/87   Ss+    0:00 gdb --nw --annotate=2 -x /home/hir.is/freysteinn/.tgdb/a2_gdb_init -q signal-race
+25888 pts/46   Ss     0:00 -zsh
+26456 pts/1    Ss     0:07 -zsh
+26648 pts/77   Ss+    0:00 -zsh
+26806 pts/26   Ss+    0:00 -zsh
+26839 pts/79   Ss     0:00 -zsh
+26915 pts/67   S+     0:00 make answers
+26918 pts/67   S+     0:00 /bin/sh -c cd questions; ./questions.sh
+26919 pts/67   S+     0:00 /bin/bash ./questions.sh
+26920 pts/67   S+     0:00 /bin/bash ./question1.sh
+27026 pts/53   Ss     0:00 -zsh
+27113 pts/87   t      0:00 /home/hir.is/freysteinn/sty16/signal-race
+27114 pts/87   Z      0:00 [signal-race] <defunct>
+27326 pts/31   S+     0:14 vim tsh.c
+28110 pts/10   S+     0:00 tmux a
+28370 pts/12   Ss+    0:00 -zsh
+28635 pts/13   Ss+    0:01 -zsh
+28699 pts/45   Ss     0:01 -zsh
+28931 pts/25   Ss     0:00 -zsh
+28987 pts/19   T      0:05 vim tsh.c
+28993 pts/25   S+     0:00 vim
+29470 pts/45   S      0:00 ./tsh -p
+29471 pts/45   Z      0:00 [echo] <defunct>
+29553 pts/36   Ss     0:00 -zsh
+30210 pts/79   S+     2:15 htop -u elisa14
+31052 pts/40   S+     0:02 vim tsh.c
+31667 pts/36   S+     0:19 vim tsh.c
+32067 pts/65   Ss     0:01 -zsh
+32078 pts/19   Ss     0:01 -zsh
+32090 pts/61   Ss+    0:00 -zsh
+32267 pts/56   S      0:00 ./tsh -p
+32271 pts/56   T      0:00 ./myspin 5
+32302 pts/35   Ss     0:00 -zsh
+32356 pts/47   Ss+    0:00 -zsh
+32492 pts/47   T      0:34 vim
+32555 pts/7    Ss+    0:01 -zsh
