@@ -305,9 +305,25 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv)
 {
-   /*	printf("%s \n", argv[0]); 
+   	printf("%s \n", argv[0]); 
 
-	if(argv[1][0]*/
+	if(argv[1][0] == '%'){
+		
+		char* tmp = argv[1] + 1;
+		int jid;
+		sscanf(tmp, "%d", &jid);
+		printf("%d \n", jid);
+		
+		
+		pid_t pid = jobs[jid].pid;
+
+		kill(-pid, SIGCONT);
+
+		if (strcmp(argv[0], "fg")) {
+			waitfg(pid);
+		}
+		
+	}
 	return;
 }
 
@@ -315,8 +331,12 @@ void do_bgfg(char **argv)
  * waitfg - Block until process pid is no longer the foreground process
  */
 void waitfg(pid_t pid)
-{
-    return;
+{		
+	while(pid == fgpid(jobs)) { //The shell watis for the fb job to terminate
+		sleep(1);
+	}
+
+	return;
 }
 
 /*****************
