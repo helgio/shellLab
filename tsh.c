@@ -310,11 +310,14 @@ int builtin_cmd(char **argv)
 /*
  * do_bgfg - Execute the builtin bg and fg commands
  */
+
+
+// Checks if a string has only number else prints out error message
 int isStrDigits(char* str, char **argv){
 
 	for(int i = 0; str[i] != '\0'; i++){			
 		if(!isdigit(str[i])){
-			printf("%s command requires PID or %% jobid argument \n", argv[0]);
+			printf("%s command requires PID or %% jobid \n", argv[0]);
 			return 0;
 		}
 	}
@@ -325,23 +328,10 @@ int isStrDigits(char* str, char **argv){
 
 void do_bgfg(char **argv)
 {
-  // 	printf("%s \n", argv[1]); 
-//	printf("test#4 \n");
 	if(!argv[1]){
-		
-//		printf("test#0 \n");
-		printf("%s command requires PID or %% jobid \n", argv[0]);
+		printf("%s command requires PID or %% jobid argument\n", argv[0]);
 		return;
 	}
-
-//	printf("test1 \n");
-
-/*	char* tmp = argv[1] + 1;
-	int arg;
-	sscanf(tmp, "%d", &arg);*/
-
-//	printf("test2 \n");
-
 	
 	int pid;
 
@@ -355,19 +345,8 @@ void do_bgfg(char **argv)
 			return;
 		}
 
-//	printf("## %d \n", jid);
-	/*	for(int i = 0; argStr[i] != '\0'; i++){
-			
-			printf("%c \n", argStr[i]);
-			if(!isdigit(argStr[i])){
-				printf("%s command requires PID or %% jobid argument \n", argv[0]);
-				return;
-			}
-		}*/
-		
-//		printf("%d \n", jid);
 		if(getjobjid(jobs, jid) == NULL){
-			printf("(%d): No such job \n", jid);
+			printf("%%%d: No such job \n", jid);
 			return;
 		}
 		
@@ -375,30 +354,18 @@ void do_bgfg(char **argv)
 	}
 	else{
 	
-//		printf("test#4 \n");
 		char* argStr = argv[1];
 		sscanf(argStr, "%d", &pid);
 
 		if(!isStrDigits(argStr, argv)){
 			return;
 		}
-
-/*		if(!isdigit(tmp[0])){
-
-//			printf("test#5 \n");
-			printf("%s command requires PID or %% jobid argument \n", argv[0]);
-			return;
-		}*/
-			
-//			printf("test#6 \n");
 		if(getjobpid(jobs, (pid_t) pid) == NULL){
 			
-//			printf("test#7 \n");
 			printf("(%d): No such process \n", pid);
 			return;
 		}
 	}
-	//	printf("%d \n", pid);
 
 	kill(-pid, SIGCONT);
 	
@@ -408,9 +375,17 @@ void do_bgfg(char **argv)
 		waitfg(pid);
 		return;
 	}
-		
+	
+
 	getjobpid(jobs, pid)->state = BG; //job state changed to BG
 	
+	
+    for (int i = 0; i < MAXJOBS; i++) {
+        if (jobs[i].pid == pid) {
+			printf("[%d] (%d) %s", pid2jid(pid), pid, jobs[i].cmdline);
+        }
+    }
+
 	return;
 }
 
