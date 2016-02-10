@@ -153,6 +153,7 @@ int main(int argc, char **argv)
         }
 
         /* Evaluate the command line */
+
         eval(cmdline);
         fflush(stdout);
         fflush(stdout);
@@ -174,6 +175,7 @@ int main(int argc, char **argv)
  */
 void eval(char *cmdline)
 {
+
 	char *argv[MAXARGS]; // Argumented list execve()
 	char buf[MAXLINE];   // Holds modified commandline
 	//struct job_t *jobs;   // for acessing jobs
@@ -183,6 +185,7 @@ void eval(char *cmdline)
 	if (argv[0] == NULL) {
 		return;          // ignore empty lines
 	}
+
 	if (!builtin_cmd(argv)){
 		sigemptyset(&mask);
 		sigaddset(&mask, SIGCHLD);
@@ -287,10 +290,13 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv)
 {
+
+
     if(strcmp(argv[0], "quit") == 0){
         exit(0);
     } 
 	if ((strcmp(argv[0], "fg") == 0) || (strcmp(argv[0], "bg") == 0)){
+
         do_bgfg(argv);
 		return 1;
 	}	
@@ -304,48 +310,91 @@ int builtin_cmd(char **argv)
 /*
  * do_bgfg - Execute the builtin bg and fg commands
  */
+int isStrDigits(char* str, char **argv){
+
+	for(int i = 0; str[i] != '\0'; i++){			
+		if(!isdigit(str[i])){
+			printf("%s command requires PID or %% jobid argument \n", argv[0]);
+			return 0;
+		}
+	}
+
+	return 1;
+
+}
+
 void do_bgfg(char **argv)
 {
-  // 	printf("%s \n", argv[0]); 
+  // 	printf("%s \n", argv[1]); 
+//	printf("test#4 \n");
 	if(!argv[1]){
-		printf("%s command requires PID or %% jobid argument \n", argv[0]);
+		
+//		printf("test#0 \n");
+		printf("%s command requires PID or %% jobid \n", argv[0]);
 		return;
 	}
 
-	printf("test1 \n");
+//	printf("test1 \n");
 
-	char* tmp = argv[1] + 1;
+/*	char* tmp = argv[1] + 1;
 	int arg;
-	sscanf(tmp, "%d", &arg);
+	sscanf(tmp, "%d", &arg);*/
 
-	printf("test2 \n");
+//	printf("test2 \n");
 
-	printf("%d \n", arg);
-	printf("%s \n", tmp);
-	if(!isdigit(arg)){
-		printf("%s command requires PID or %% jobid argument \n", argv[0]);
-		return;
-	}
 	
-	printf("test3 \n");
-	pid_t pid;
+	int pid;
 
 	if(argv[1][0] == '%'){
-		int jid = arg;
-		printf("%d \n", jid);
+
+		char* argStr = argv[1] + 1;
+		int jid;
+		sscanf(argStr, "%d", &jid);
+		
+		if(!isStrDigits(argStr, argv)){
+			return;
+		}
+
+//	printf("## %d \n", jid);
+	/*	for(int i = 0; argStr[i] != '\0'; i++){
+			
+			printf("%c \n", argStr[i]);
+			if(!isdigit(argStr[i])){
+				printf("%s command requires PID or %% jobid argument \n", argv[0]);
+				return;
+			}
+		}*/
+		
+//		printf("%d \n", jid);
 		if(getjobjid(jobs, jid) == NULL){
-			printf("(%d): No such job", jid);
+			printf("(%d): No such job \n", jid);
 			return;
 		}
 		
 		pid = jid2pid(jid);
 	}
 	else{
-		printf("test");
-		pid = arg;
-		if(1){
-	//	if(getjobpid(jobs, pid) == NULL){
-			printf("(%d): No such job", pid);
+	
+//		printf("test#4 \n");
+		char* argStr = argv[1];
+		sscanf(argStr, "%d", &pid);
+
+		if(!isStrDigits(argStr, argv)){
+			return;
+		}
+
+/*		if(!isdigit(tmp[0])){
+
+//			printf("test#5 \n");
+			printf("%s command requires PID or %% jobid argument \n", argv[0]);
+			return;
+		}*/
+			
+//			printf("test#6 \n");
+		if(getjobpid(jobs, (pid_t) pid) == NULL){
+			
+//			printf("test#7 \n");
+			printf("(%d): No such process \n", pid);
 			return;
 		}
 	}
