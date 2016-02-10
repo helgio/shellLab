@@ -328,24 +328,24 @@ int isStrDigits(char* str, char **argv){
 
 void do_bgfg(char **argv)
 {
-	if(!argv[1]){
+	if(!argv[1]){ //Checks if there is a argument with the command
 		printf("%s command requires PID or %% jobid argument\n", argv[0]);
 		return;
 	}
 	
 	int pid;
 
-	if(argv[1][0] == '%'){
+	if(argv[1][0] == '%'){ // Checks if it is a jobid argument
 
-		char* argStr = argv[1] + 1;
+		char* argStr = argv[1] + 1; //cuts the % sign from the argument
 		int jid;
-		sscanf(argStr, "%d", &jid);
+		sscanf(argStr, "%d", &jid); //convert the string to int
 		
-		if(!isStrDigits(argStr, argv)){
+		if(!isStrDigits(argStr, argv)){ //check if the string is a number
 			return;
 		}
 
-		if(getjobjid(jobs, jid) == NULL){
+		if(getjobjid(jobs, jid) == NULL){ //check if the job exists
 			printf("%%%d: No such job \n", jid);
 			return;
 		}
@@ -355,12 +355,12 @@ void do_bgfg(char **argv)
 	else{
 	
 		char* argStr = argv[1];
-		sscanf(argStr, "%d", &pid);
+		sscanf(argStr, "%d", &pid); //convert string to int
 
-		if(!isStrDigits(argStr, argv)){
+		if(!isStrDigits(argStr, argv)){ //check it the string is a number
 			return;
 		}
-		if(getjobpid(jobs, (pid_t) pid) == NULL){
+		if(getjobpid(jobs, (pid_t) pid) == NULL){ //check if the job exists
 			
 			printf("(%d): No such process \n", pid);
 			return;
@@ -368,7 +368,8 @@ void do_bgfg(char **argv)
 	}
 
 	kill(-pid, SIGCONT);
-	
+
+	// If it is as fg process than wait for ot to finnish
 	if (strcmp(argv[0], "fg") == 0) {
 
 		getjobpid(jobs, pid)->state = FG; //job state changed to FG
@@ -420,10 +421,14 @@ void sigchld_handler(int sig)
 	int saved_errno = errno;
 	while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
 		if (WIFSTOPPED(status)){ //check if it is a Stop signal (crl-z)
+			sigtstp_handler(20); //send signal to signalhandler
 			return;
 		}
 
-		deletejob(jobs, pid); //the job deleted for joblist
+		if (WIFSIGNALED(status)){//checks for terminate signal (crl-c)
+			sigint_handler(-2); //send signal to signalhandler
+		}
+			deletejob(jobs,pid);
 	}
 	errno = saved_errno;
 	
