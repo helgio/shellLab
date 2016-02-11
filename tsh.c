@@ -4,7 +4,7 @@
  * You __MUST__ add your user information here below
  *
  * === User information ===
- * Group: NONE
+ * Group: HAGNA
  * User 1: helgio13
  * SSN: 0206932909
  * User 2: ragnae13
@@ -176,38 +176,35 @@ int main(int argc, char **argv)
 void eval(char *cmdline)
 {
 
-	char *argv[MAXARGS]; // Argumented list execve()
-	char buf[MAXLINE];   // Holds modified commandline
-	//struct job_t *jobs;   // for acessing jobs
+	char *argv[MAXARGS]; 	// Argumented list execve()
 	int isInBg = parseline(cmdline, argv); // should the job run in bg or fg
-	pid_t pid;   	 	 // Process id 
+	pid_t pid;   	 	 	// Process id 
 	sigset_t mask;
-	if (argv[0] == NULL) {
-		return;          // ignore empty lines
-	}
 
-	if (!builtin_cmd(argv)){
-		sigemptyset(&mask);
+	if (argv[0] == NULL) {
+		return;         	 // ignore empty lines
+	}
+	
+	if (!builtin_cmd(argv)){    			 		// only if arg is not builin 
+		sigemptyset(&mask);							// then fork a new process
 		sigaddset(&mask, SIGCHLD);
-		sigprocmask(SIG_BLOCK, &mask, NULL); //Block SIGCHLD
-		if ((pid = fork()) == 0) {	// child runs user job
-			setpgid(0,0);
-			sigprocmask(SIG_UNBLOCK, &mask, NULL); //Unblock SIGCHLD 
+		sigprocmask(SIG_BLOCK, &mask, NULL); 		//Block SIGCHLD
+		if ((pid = fork()) == 0) {					// child runs user job
+			setpgid(0,0);          					// child user group id
+			sigprocmask(SIG_UNBLOCK, &mask, NULL);  //Unblock SIGCHLD 
 			if (execve(argv[0], argv, environ) < 0)  {  
+				    /* If execv returns  on error -1 then we know it failes to find command*/
 				printf("%s: Command not found. \n", argv[0]);
 				fflush(stdout);
 				exit(0);
 				}	
 			}
-									// útfæra FG BG
-									// prenta joblist, add í job state
 		if(!isInBg){ //Check is the job is a bg or fg job
 			addjob(jobs, pid, FG, cmdline); //add the job to the joblist as fg job
 			sigprocmask(SIG_UNBLOCK, &mask, NULL);  /* Unblock SIGCHLD */
 			while(pid == fgpid(jobs)) { //The shell watis for the fb job to terminate
 					sleep(1);
 			}
-		//	deletejob(jobs, pid);
 		}
 		else{
 			
@@ -217,9 +214,6 @@ void eval(char *cmdline)
 		}
 	   sigprocmask(SIG_UNBLOCK, &mask, NULL);  // Unblock SIGCHLD 
 	}		
-	// passa reapa rétt
-	// https://vimeo.com/60240244 
-	// útfæra 
 
 	return;
 }
@@ -375,11 +369,9 @@ void do_bgfg(char **argv)
 		getjobpid(jobs, pid)->state = FG; //job state changed to FG
 		waitfg(pid);
 		return;
-	}
-	
+	}	
 
 	getjobpid(jobs, pid)->state = BG; //job state changed to BG
-	
 	
     for (int i = 0; i < MAXJOBS; i++) {
         if (jobs[i].pid == pid) {
